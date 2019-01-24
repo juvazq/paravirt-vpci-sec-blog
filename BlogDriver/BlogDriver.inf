@@ -1,0 +1,61 @@
+;
+; BlogDriver.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
+Provider=%ManufacturerName%
+DriverVer=
+CatalogFile=BlogDriver.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+BlogDriver.sys  = 1
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%BlogDriver.DeviceDesc%=Install_Section, VMBUS\{44C4F61D-4444-4400-9D52-802E27EDE19F}
+
+[Install_Section.NT]
+Include=wvpci.inf
+Needs=Vpci_Device_Child.NT
+CopyFiles=BlogDriver_Files
+
+[BlogDriver_Files]
+BlogDriver.sys
+
+[Install_Section.NT.HW]
+Include=wvpci.inf
+Needs=Vpci_Device_Child.NT.HW
+AddReg=BlogDriver_AddReg
+
+[BlogDriver_AddReg]
+HKR,,"UpperFilters",0x00010000,"BlogDriver"
+
+[Install_Section.NT.Services]
+Include=wvpci.inf
+Needs=Vpci_Device_Child.NT.Services
+AddService=BlogDriver,,BlogDriver_Service_Child
+
+[BlogDriver_Service_Child]
+DisplayName    = %BlogDriver.SvcDesc%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\BlogDriver.sys
+
+[Strings]
+ManufacturerName="TestManufacturer"
+ClassName=""
+DiskName="BlogDriver Source Disk"
+BlogDriver.DeviceDesc="Microsoft Hyper-V Virtual PCI Bus (With Filter)"
+BlogDriver.SvcDesc="Microsoft Hyper-V Virtual PCI Bus (With Filter)"
